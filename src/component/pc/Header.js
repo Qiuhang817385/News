@@ -14,6 +14,8 @@ import {
 
 import logo from './../../assets/images/logo.png';
 
+import { login as LoginService } from './service/loginSer';
+
 import { Link } from 'react-router-dom';
 import { AppstoreTwoTone } from '@ant-design/icons';
 
@@ -59,7 +61,7 @@ export default function Header () {
    * 登出按钮
    */
   const logout = () => {
-
+    setHasLogined(false);
   }
   /**
    * 导航回调
@@ -77,9 +79,15 @@ export default function Header () {
     }
   }
 
-  const onFinish = values => {
-    console.log('Success:', values);
-
+  const onFinish = async (values) => {
+    let res = await LoginService(action, { ...values })
+    if (res) {
+      setUserNickName(values.username);
+      setUserid(JSON.stringify(Date.now()));
+      message.success("请求成功！");
+    }
+    if (action === 'login') setHasLogined(true);
+    setModalVisible(false);
   };
 
   const onFinishFailed = errorInfo => {
